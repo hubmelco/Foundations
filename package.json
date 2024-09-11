@@ -1,0 +1,20 @@
+{
+  "name": "foundations",
+  "version": "1.0.0",
+  "description": "Revature Training Foundations Project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "jest"
+  },
+  "author": "Jonathan H",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.649.0",
+    "express": "^4.20.0",
+    "npm": "^10.8.3"
+  }
+}
