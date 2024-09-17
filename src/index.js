@@ -1,8 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 
-const userService = require("./Services/users.js");
-const ticketService = require("./Services/tickets.js");
+const userService = require("./Services/User/user.js");
+const ticketService = require("./Services/Ticket/ticket.js");
 
 const app = express();
 const port = 3000;

@@ -4,7 +4,7 @@
   "description": "Revature Training Foundations Project",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node src/index.js",
     "test": "jest"
   },
   "author": "Jonathan H",
@@ -14,6 +14,8 @@
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.649.0",
+    "@aws-sdk/lib-dynamodb": "^3.651.1",
+    "cors": "^2.8.5",
     "express": "^4.20.0",
     "npm": "^10.8.3"
   }
