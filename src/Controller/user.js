@@ -31,7 +31,7 @@ router.post("/", async (req, res) => {
     }
     try {
         const {message, data} = await createUser(req.body);
-        return data ? res.status(201).json(data) : res.status(400).json({message, data: {username}});
+        return data ? res.status(201).json({message, data}) : res.status(400).json({message, data: {username}});
     } catch (err) {
         logger.error(err);
         return res.status(500).json({message: "Unexpected Server Error"});

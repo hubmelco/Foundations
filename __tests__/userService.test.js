@@ -17,7 +17,6 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-    DynamoDBDocumentClient.from.mockReturnValue({send: jest.fn()});
     jest.clearAllMocks();
 })
 
