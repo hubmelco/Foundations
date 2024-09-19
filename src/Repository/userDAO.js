@@ -1,8 +1,6 @@
 const { getClient } = require("../Util/DBClient");
 const { QueryCommand } = require("@aws-sdk/client-dynamodb");
 const { PutCommand } = require("@aws-sdk/lib-dynamodb");
-const bcrypt = require("bcrypt");
-const uuid = require("uuid");
 
 const TableName = "foundation"
 
@@ -36,6 +34,7 @@ const getUserByUsername = async (username) => {
         user.username = Object.values(item.username)[0];
         user.role = Object.values(item.role)[0];
         user.id = Object.values(item.id)[0];
+        user.password = Object.values(item.password)[0];
         return user;
     });
     return cleaned[0]; // The user or undefined (username should be unique)

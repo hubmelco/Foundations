@@ -43,7 +43,8 @@ describe("Tests for creating a user", () => {
             class: {S: "user"},
             username: {S: "jonathan"},
             id: {S: "1"},
-            role: {S: "Employee"}
+            role: {S: "Employee"},
+            password: {S: "123"}
         }]});
     })
 
