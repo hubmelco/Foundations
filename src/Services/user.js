@@ -8,7 +8,7 @@ const createUser = async (info) => {
         class: "user",
         id: uuid.v4(),
         username,
-        role: "Employee"
+        role: "employee"
     }
     const data = await userDAO.getUserByUsername(username);
     if (data) {

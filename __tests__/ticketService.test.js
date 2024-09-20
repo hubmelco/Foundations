@@ -1,16 +1,13 @@
-const {DynamoDBClient} = require("@aws-sdk/client-dynamodb");
-const {DynamoDBDocumentClient} = require("@aws-sdk/lib-dynamodb");
+const ticketDAO = require("../src/Repository/ticketDAO.js");
 const uuid = require("uuid");
 
 const { createTicket } = require("../src/Services/ticket.js");
 
-jest.mock("@aws-sdk/client-dynamodb");
-jest.mock("@aws-sdk/lib-dynamodb");
+jest.mock("../src/Repository/ticketDAO.js");
 jest.mock("uuid");
 
 
 beforeEach(() => {
-    DynamoDBDocumentClient.from.mockReturnValue({send: jest.fn()});
     uuid.v4.mockReturnValue(1);
 })
 
@@ -23,17 +20,18 @@ describe("Tests for creating tickets", () => {
         const info = {
             amount: 500,
             description: "test"
-        }
+        };
+        const username = "jonathan";
 
         const expected = {
             id: 1,
             class: "ticket",
-            username: "jonathan", //Hard coded in until JWT is implemented (in which case we use a mock)
+            username: "jonathan",
             amount: info.amount,
             description: info.description,
-        }
+        };
 
-        const {message, data} = await createTicket(info);
+        const {message, data} = await createTicket(username, info);
 
         expect(data).toEqual(expected);
         expect(message).toBeDefined();
@@ -43,9 +41,10 @@ describe("Tests for creating tickets", () => {
         const info = {
             amount: 0,
             description: "test"
-        }
+        };
+        const username = "test";
 
-        const {message, data} = await createTicket(info);
+        const {message, data} = await createTicket(username, info);
 
         expect(data).toBeFalsy();
         expect(message).toBeDefined();
@@ -55,9 +54,10 @@ describe("Tests for creating tickets", () => {
         const info = {
             amount: -5,
             description: "test"
-        }
+        };
+        const username = "test";
 
-        const {message, data} = await createTicket(info);
+        const {message, data} = await createTicket(username, info);
 
         expect(data).toBeFalsy();
         expect(message).toBeDefined();

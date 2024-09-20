@@ -1,17 +1,14 @@
-const {DynamoDBClient} = require("@aws-sdk/client-dynamodb");
-const {DynamoDBDocumentClient} = require("@aws-sdk/lib-dynamodb");
+const userDAO = require("../src/Repository/userDAO.js");
 const bcrypt = require("bcrypt");
 const uuid = require("uuid");
 
 const {createUser} = require("../src/Services/user.js");
 
-jest.mock("@aws-sdk/client-dynamodb");
-jest.mock("@aws-sdk/lib-dynamodb");
+jest.mock("../src/Repository/userDAO.js");
 jest.mock("uuid");
 jest.mock("bcrypt");
 
 beforeEach(() => {
-    DynamoDBDocumentClient.from.mockReturnValue({send: jest.fn()});
     uuid.v4.mockReturnValue(1);
     bcrypt.hash.mockImplementation((password) => password);
 })
@@ -28,37 +25,18 @@ describe("Tests for creating a user", () => {
             class: "user",
             id: 1,
             username: "jonathan",
-            role: "Employee"
+            role: "employee"
         }
-
-        const dbClient = DynamoDBDocumentClient.from();
-        dbClient.send.mockResolvedValueOnce({Items: []});
+        userDAO.getUserByUsername.mockResolvedValueOnce(undefined);
         const {message, data} = await createUser(info);
 
         expect(data).toEqual(expected);
         expect(message).toBeDefined();
-
-        // NOT A PART OF THIS TEST, JUST NEEDED TO CORRECTLY RUN NEXT TEST (weird thing with mocks carrying over to other tests)
-        dbClient.send = jest.fn().mockResolvedValueOnce({Items: [{
-            class: {S: "user"},
-            username: {S: "jonathan"},
-            id: {S: "1"},
-            role: {S: "Employee"},
-            password: {S: "123"}
-        }]});
     })
 
     test("Username already in use error", async () => {
         const info = {username: "jonathan", password: "123"};
-        // MOCK SETUP that doesn't work due to weird mock behaviour
-        // const databaseData = {
-        //     class: {S: "user"},
-        //     username: {S: "jonathan"},
-        //     id: {S: "1"},
-        //     role: {S: "Employee"}
-        // }
-        // const dbClient = DynamoDBDocumentClient.from();
-        // dbClient.send.mockResolvedValue({Items: [databaseData]});
+        userDAO.getUserByUsername.mockResolvedValueOnce("truthy value");
         const {message, data} = await createUser(info);
 
         expect(data).toBeFalsy();
