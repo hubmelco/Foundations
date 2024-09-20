@@ -1,7 +1,7 @@
 const ticketDAO = require("../src/Repository/ticketDAO.js");
 const uuid = require("uuid");
 
-const { createTicket } = require("../src/Services/ticket.js");
+const { createTicket, updateTicket } = require("../src/Services/ticket.js");
 
 jest.mock("../src/Repository/ticketDAO.js");
 jest.mock("uuid");
@@ -29,6 +29,7 @@ describe("Tests for creating tickets", () => {
             username: "jonathan",
             amount: info.amount,
             description: info.description,
+            status: "pending"
         };
 
         const {message, data} = await createTicket(username, info);
@@ -58,6 +59,58 @@ describe("Tests for creating tickets", () => {
         const username = "test";
 
         const {message, data} = await createTicket(username, info);
+
+        expect(data).toBeFalsy();
+        expect(message).toBeDefined();
+    })
+})
+
+describe("Tests for updating ticket statuses", () => {
+    test("A successful approved status update", async () => {
+        const id = 1; 
+        const status = "approved";
+        const ticket = {
+            status: "pending"
+        }
+
+        ticketDAO.getTicketById.mockResolvedValueOnce(ticket);
+        const {message, data} = await updateTicket(id, status);
+
+        expect(data).toEqual({id, status});
+        expect(message).toBeDefined();
+    })
+
+    test("A successful denied status update", async () => {
+        const id = 1; 
+        const status = "denied";
+        const ticket = {
+            status: "pending"
+        }
+
+        ticketDAO.getTicketById.mockResolvedValueOnce(ticket);
+        const {message, data} = await updateTicket(id, status);
+
+        expect(data).toEqual({id, status});
+        expect(message).toBeDefined();
+    })
+
+    test("An invalid ticket id", async () => {
+        const id = "invalid";
+        const status = "denied";
+
+        ticketDAO.getTicketById.mockResolvedValueOnce(undefined);
+        const {message, data} = await updateTicket(id, status);
+
+        expect(data).toBeFalsy();
+        expect(message).toBeDefined();
+    })
+
+    test("An invalid status type", async () => {
+        const id = 1;
+        const status = "invalid";
+
+        ticketDAO.getTicketById.mockResolvedValueOnce({status: "pending"});
+        const {message, data} = await updateTicket(id, status);
 
         expect(data).toBeFalsy();
         expect(message).toBeDefined();

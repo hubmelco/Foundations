@@ -1,8 +1,8 @@
 const express = require("express");
 
-const {createTicket} = require("../Services/ticket.js");
+const {createTicket, updateTicket} = require("../Services/ticket.js");
 const logger = require("../Util/logger.js");
-const { authenticate } = require("../Middleware/auth.js");
+const { authenticate, adminAuthenticate } = require("../Middleware/auth.js");
 
 const router = express.Router();
 
@@ -23,6 +23,21 @@ router.post("/", async (req, res) => {
     } catch (err) {
         logger.error(err);
         return res.status(500).json({message: "Unexpected server error"});
+    }
+})
+
+router.put("/:id", adminAuthenticate, async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+    if (!status) {
+        return res.status(400).json({message: "status must be provided in body"});
+    }
+    try {
+        const {message, data} = await updateTicket(id, status);
+        return data ? res.status(200).json({message, data}) : res.status(400).json({message, data: {id, status}});
+    } catch (err) {
+        logger.error(err);
+        res.status(500).json("Unexpected server error");
     }
 })
 

@@ -12,10 +12,26 @@ const createTicket = async (username, info) => {
         class: "ticket",
         username,
         amount,
-        description
+        description,
+        status: "pending"
     }
     await ticketDAO.createTicket(ticket);
     return {message: "Ticket Created", data: ticket};
 }
 
-module.exports = {createTicket};
+const updateTicket = async (id, status) => {
+        const ticket = await ticketDAO.getTicketById(id);
+        if (!ticket) {
+            return {message: "Ticket not found", data: false};
+        }
+        if (ticket.status !== "pending") {
+            return {message: "ticket already closed, cannot be modified", data: false};
+        }
+        if (status !== "approved" && status !== "denied") {
+            return {message: "Invalid ticket status, must be 'approved' or 'denied'", data: false};
+        }
+        await ticketDAO.updateTicket(id, status);
+        return {message: "Updated ticket status", data: {id, status}};
+}
+
+module.exports = {createTicket, updateTicket};

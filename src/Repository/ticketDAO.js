@@ -1,8 +1,8 @@
-const { PutCommand } = require("@aws-sdk/lib-dynamodb");
+const { PutCommand, UpdateCommand, GetCommand } = require("@aws-sdk/lib-dynamodb");
 
 const {getClient} = require("../Util/DBClient");
 
-const TableName = "foundation"
+const TableName = "foundation";
 
 const createTicket = async (Item) => {
     const command = new PutCommand({
@@ -21,8 +21,26 @@ const deleteTicket = async () => {
 
 }
 
-const updateTicket = async () => {
-    
+const updateTicket = async (id, status) => {
+    const command = new UpdateCommand({
+        TableName,
+        Key: {class: "ticket", id},
+        AttributeUpdates: {
+            status: {Value: status}
+        }
+    })
+    const documentClient = getClient();
+    await documentClient.send(command);
 }
 
-module.exports = {createTicket, getTicket, updateTicket, deleteTicket}
+const getTicketById = async (id) => {
+    const command = new GetCommand({
+        TableName,
+        Key: {class: "ticket", id}
+    })
+    const documentClient = getClient();
+    const {Item} = await documentClient.send(command);
+    return Item;
+}
+
+module.exports = {createTicket, getTicket, updateTicket, deleteTicket, getTicketById}
