@@ -1,12 +1,35 @@
 const express = require("express");
 
-const {createTicket, updateTicket} = require("../Services/ticket.js");
+const {createTicket, updateTicket, getTickets, getPendingTickets} = require("../Services/ticket.js");
 const logger = require("../Util/logger.js");
 const { authenticate, adminAuthenticate } = require("../Middleware/auth.js");
 
 const router = express.Router();
 
 router.use(authenticate);
+
+router.get("/", async (req, res) => {
+    const {username, role} = res.locals.user;
+    if (role === "manager") {
+        // Allow managers to get all other peoples pending tickets minus their own
+        try {
+            const {message, data} = await getTickets(username);
+            const result = await getPendingTickets(username); 
+            return data ? res.status(200).json({messages: {message, message2: result.message}, data: {your_tickets: data, pending_tickets: result.data}}) : res.status(400).json({message});
+        } catch (err) {
+            logger.error(err);
+            res.status(500).json({message: "Unexpected Server error"});
+        }
+    } else {
+        try {
+            const {message, data} = await getTickets(username);
+            return data ? res.status(200).json({message, data}) : res.status(400).json({message})
+        } catch (err) {
+            logger.error(err);
+            res.status(500).json({message: "Unexpected Server error"});
+        }
+    }
+})
 
 router.post("/", async (req, res) => {
     const {amount, description} = req.body;

@@ -19,7 +19,7 @@ const adminAuthenticate = (req, res, next) => {
         authenticate(req, res, next);
     }
     const {role} = res.locals.user;
-    if (role.toLowerCase() === "employee") {
+    if (role === "employee") {
         return res.status(401).json({message: "Priviledge too low"});
     }
     next();

@@ -1,7 +1,7 @@
 const ticketDAO = require("../src/Repository/ticketDAO.js");
 const uuid = require("uuid");
 
-const { createTicket, updateTicket } = require("../src/Services/ticket.js");
+const { createTicket, updateTicket, getTickets, getPendingTickets } = require("../src/Services/ticket.js");
 
 jest.mock("../src/Repository/ticketDAO.js");
 jest.mock("uuid");
@@ -113,6 +113,28 @@ describe("Tests for updating ticket statuses", () => {
         const {message, data} = await updateTicket(id, status);
 
         expect(data).toBeFalsy();
+        expect(message).toBeDefined();
+    })
+})
+
+describe("Tests for getting ticket submissions", () => {
+    test("Getting your own tickets", async () => {
+        const username = "whatever" // Retrieved from JWT after verifying, should never be invalid
+
+        ticketDAO.getTickets.mockResolvedValueOnce([]);
+        const {message, data} = await getTickets(username);
+
+        expect(data).toBeDefined()
+        expect(message).toBeDefined();
+    })
+
+    test("Getting pending tickets", async () => {
+        const username = "whatever" // Retrieved from JWT after verifying, should never be invalid
+
+        ticketDAO.getPendingTickets.mockResolvedValueOnce([]);
+        const {message, data} = await getPendingTickets(username);
+
+        expect(data).toBeDefined()
         expect(message).toBeDefined();
     })
 })

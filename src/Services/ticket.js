@@ -2,6 +2,11 @@ const uuid = require("uuid");
 
 const ticketDAO = require("../Repository/ticketDAO");
 
+const getTickets = async (username) => {
+    const tickets = await ticketDAO.getTickets(username);
+    return {message: "Successfully retrieved your tickets", data: tickets}
+}
+
 const createTicket = async (username, info) => {
     const {amount, description} = info;
     if (amount <= 0) {
@@ -34,4 +39,9 @@ const updateTicket = async (id, status) => {
         return {message: "Updated ticket status", data: {id, status}};
 }
 
-module.exports = {createTicket, updateTicket};
+const getPendingTickets = async (username) => {
+    const tickets = await ticketDAO.getPendingTickets(username);
+    return {message: "Successfully retrieved all pending tickets", data: tickets};
+}
+
+module.exports = {createTicket, updateTicket, getTickets, getPendingTickets};
