@@ -2,7 +2,7 @@ const userDAO = require("../src/Repository/userDAO.js");
 const bcrypt = require("bcrypt");
 const uuid = require("uuid");
 
-const {createUser} = require("../src/Services/user.js");
+const {createUser, updateUser} = require("../src/Services/user.js");
 
 jest.mock("../src/Repository/userDAO.js");
 jest.mock("uuid");
@@ -38,6 +38,28 @@ describe("Tests for creating a user", () => {
         const info = {username: "jonathan", password: "123"};
         userDAO.getUserByUsername.mockResolvedValueOnce("truthy value");
         const {message, data} = await createUser(info);
+
+        expect(data).toBeFalsy();
+        expect(message).toBeDefined();
+    })
+})
+
+describe("Tests for updating a users role", () => {
+    test("Tests a valid call to update user", async () => {
+        const id = "1";
+        const role = "manager";
+
+        const {message, data} = await updateUser(id, role);
+
+        expect(data).toEqual({id, role});
+        expect(message).toBeDefined();
+    })
+
+    test("Tests a invalid call to update user with bad role", async () => {
+        const id = "1";
+        const role = "invalid";
+
+        const {message, data} = await updateUser(id, role);
 
         expect(data).toBeFalsy();
         expect(message).toBeDefined();

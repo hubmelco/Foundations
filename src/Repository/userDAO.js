@@ -1,6 +1,6 @@
 const { getClient } = require("../Util/DBClient");
 const { QueryCommand } = require("@aws-sdk/client-dynamodb");
-const { PutCommand } = require("@aws-sdk/lib-dynamodb");
+const { PutCommand, UpdateCommand } = require("@aws-sdk/lib-dynamodb");
 
 const TableName = "foundation"
 
@@ -44,8 +44,16 @@ const deleteUser = async (username) => {
 
 }
 
-const updateUser = async (username) => {
-
+const updateUser = async (id, role) => {
+    const command = new UpdateCommand({
+        TableName,
+        Key: {class: "user", id},
+        AttributeUpdates: {
+            role: {Value: role}
+        }
+    })
+    const documentClient = getClient();
+    await documentClient.send(command);
 }
 
 module.exports = {createUser, getUserByUsername, deleteUser, updateUser};

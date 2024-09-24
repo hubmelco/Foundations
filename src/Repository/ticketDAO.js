@@ -13,7 +13,7 @@ const createTicket = async (Item) => {
     await documentClient.send(command);
 }
 
-const getTickets = async (username, query) => {
+const getTickets = async (username, query = {}) => {
     const options = {
         TableName,
         IndexName: "username-index",

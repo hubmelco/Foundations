@@ -21,4 +21,12 @@ const createUser = async (info) => {
     return {message: "User created", data: user};
 }
 
-module.exports = {createUser}
+const updateUser = async (id, role) => {
+    if (role !== "employee" && role !== "manager") {
+        return {message: "Invalid role types. Must be 'employee' or 'manager'", data: false};
+    }
+    await userDAO.updateUser(id, role);
+    return {message: `User updated to role '${role}'`, data: {id, role}};
+}
+
+module.exports = {createUser, updateUser}
