@@ -22,7 +22,7 @@ router.get("/", async (req, res) => {
         }
     } else {
         try {
-            const {message, data} = await getTickets(username);
+            const {message, data} = await getTickets(username, req.query);
             return data ? res.status(200).json({message, data}) : res.status(400).json({message})
         } catch (err) {
             logger.error(err);
@@ -42,7 +42,7 @@ router.post("/", async (req, res) => {
     }
     try {
         const {message, data} = await createTicket(username, req.body);
-        return data ? res.status(201).json({message, data}) : res.status(400).json({message, data: {amount}});
+        return data ? res.status(201).json({message, data}) : res.status(400).json({message, data: req.body});
     } catch (err) {
         logger.error(err);
         return res.status(500).json({message: "Unexpected server error"});

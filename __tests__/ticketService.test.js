@@ -63,6 +63,44 @@ describe("Tests for creating tickets", () => {
         expect(data).toBeFalsy();
         expect(message).toBeDefined();
     })
+
+    test("Invalid ticket type", async () => {
+        const info = {
+            amount: 500,
+            description: "test",
+            type: "invalid"
+        };
+        const username = "test user";
+
+        const {message, data} = await createTicket(username, info);
+
+        expect(data).toBeFalsy();
+        expect(message).toBeDefined();
+    })
+
+    test("A successful createTicket call with type", async () => {
+        const info = {
+            amount: 500,
+            description: "test",
+            type: "food"
+        };
+        const username = "jonathan";
+
+        const expected = {
+            id: 1,
+            class: "ticket",
+            username: "jonathan",
+            amount: info.amount,
+            description: info.description,
+            status: "pending",
+            type: "food"
+        };
+
+        const {message, data} = await createTicket(username, info);
+
+        expect(data).toEqual(expected);
+        expect(message).toBeDefined();
+    })
 })
 
 describe("Tests for updating ticket statuses", () => {
@@ -135,6 +173,17 @@ describe("Tests for getting ticket submissions", () => {
         const {message, data} = await getPendingTickets(username);
 
         expect(data).toBeDefined()
+        expect(message).toBeDefined();
+    })
+
+    test("Getting your own tickets by type", async () => {
+        const username = "whatever"; // Retrieved from JWT after verifying, should never be invalid
+        const query = {type: "food"};
+
+        ticketDAO.getTickets.mockResolvedValueOnce([]);
+        const {message, data} = await getTickets(username, query);
+
+        expect(data).toBeDefined(); // DAO Mock would just return the mocked return object whatever it is
         expect(message).toBeDefined();
     })
 })

@@ -2,13 +2,13 @@ const uuid = require("uuid");
 
 const ticketDAO = require("../Repository/ticketDAO");
 
-const getTickets = async (username) => {
-    const tickets = await ticketDAO.getTickets(username);
+const getTickets = async (username, query) => {
+    const tickets = await ticketDAO.getTickets(username, query);
     return {message: "Successfully retrieved your tickets", data: tickets}
 }
 
 const createTicket = async (username, info) => {
-    const {amount, description} = info;
+    const {amount, description, type} = info;
     if (amount <= 0) {
         return {message: "Invalid amount quantity. Must be greater than 0", data: false} // falsy value for repo check
     }
@@ -19,6 +19,14 @@ const createTicket = async (username, info) => {
         amount,
         description,
         status: "pending"
+    }
+    // Optional type
+    if (type) {
+        let typeLower = type.toLowerCase();
+        if (typeLower !== "travel" && typeLower !== "lodging" && typeLower !== "food" && typeLower !== "other") {
+            return {message: "Invalid type. Must be 'travel', 'lodging', 'food', or 'other'", data: false};
+        }
+        ticket.type = typeLower;
     }
     await ticketDAO.createTicket(ticket);
     return {message: "Ticket Created", data: ticket};

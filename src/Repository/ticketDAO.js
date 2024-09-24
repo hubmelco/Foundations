@@ -13,20 +13,27 @@ const createTicket = async (Item) => {
     await documentClient.send(command);
 }
 
-const getTickets = async (username) => {
-    const command = new QueryCommand({
+const getTickets = async (username, query) => {
+    const options = {
         TableName,
         IndexName: "username-index",
         KeyConditionExpression: "#class = :class AND #username = :username",
         ExpressionAttributeNames: {
             "#class": "class",
-            "#username": "username"
+            "#username": "username",
         },
         ExpressionAttributeValues: {
             ":class": "ticket",
-            ":username": username
-        }
-    })
+            ":username": username,
+        },
+    }
+    const { type } = query;
+    if (type) {
+        options.FilterExpression = "#type = :type";
+        options.ExpressionAttributeNames["#type"] = "type";
+        options.ExpressionAttributeValues[":type"] = type.toLowerCase();
+    }
+    const command = new QueryCommand(options)
     const documentClient = getClient();
     const {Items} = await documentClient.send(command);
     return Items;
