@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
 // Open up endpoints
-app.get("/", "I updated again");
+app.get("/", "I updated again again");
 app.use("/tickets", ticketRouter);
 app.use("/users", userRouter);
 app.use("/login", loginRouter);
